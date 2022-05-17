@@ -44,3 +44,26 @@ sem.test <- sem(model=model.test,data=data.filtered,cluster = 'residing_country'
 summary(sem.test)
 fitMeasures(sem.test)
 lavInspect(sem.test,'h1')
+
+# mediation test
+library(brms)
+
+# prior -> cauchy distribution 
+prior.coef <- brms::prior(cauchy(0.,1),class='b')
+
+# mediation model
+model_mediator <- bf(consp~trust_6 + gender + education + work_location + age+
+                       SSS_faml+ relationship_status + (1+trust_6|residing_country))
+model_outcome <- bf(vx ~ consp+trust_6 + gender + education + work_location + age+
+                      SSS_faml+ relationship_status+ (1+trust_6+consp|residing_country))
+
+med_result = brm(
+  model_mediator + model_outcome + set_rescor(F),
+  data=data.filtered,
+  family = gaussian(),
+  cores=4,chains=4, save_pars = save_pars(all = T),
+  sample_prior ='yes', seed=1660415,prior=prior.coef
+)
+options(width = 2000)
+save(med_result, file = 'med_test.RData')
+bayestestR::mediation(med_result)
