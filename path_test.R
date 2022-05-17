@@ -113,4 +113,27 @@ bf.comp.test.r <- bayes_factor(med_result.r,med_result, maxiter=10000)
 log(bf.comp.test.r$bf)
 
 
+# second reverse model test
+
+
+model_mediator2.r <- bf(trust_7~anti + gender + education + work_location + age+
+                        SSS_faml+ relationship_status + (1+anti|residing_country))
+model_outcome2.r <- bf(vx ~ anti+trust_7 + gender + education + work_location + age+
+                       SSS_faml+ relationship_status+ (1+trust_7+anti|residing_country))
+med_result2.r = brm(
+  model_mediator2.r + model_outcome2.r + set_rescor(F),
+  data=data.filtered,
+  family = gaussian(),
+  cores=4,chains=4, save_pars = save_pars(all = T),
+  sample_prior ='yes', seed=1660415,prior=prior.coef
+)
+summary(med_result2.r)
+bayestestR::mediation(med_result2.r)
+
+# compare two models 2
+bf.comp.test2 <- bayes_factor(med_result2,med_result2.r)
+bf.comp.test2.r <- bayes_factor(med_result2.r,med_result2)
+
+log(bf.comp.test2$bf)
+
 save.image(file = 'med_test.RData')
