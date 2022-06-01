@@ -90,6 +90,9 @@ b.h1 <- brms::brm(vaccine_0neutral ~ vx+gender + education + work_location + age
                   sample_prior ='yes', seed=1660415,prior=prior.coef)
 btable.h1 <- describe_posterior(b.h1, effect='random')
 
+# save result
+write.csv(as.data.frame(btable.h1),'H1.csv')
+
 # H2
 prior.coef <- brms::prior(cauchy(0.,1),class='b')
 b.h2 <- brms::brm(vx ~ consp+trust_6+gender + education + work_location + age+
@@ -102,6 +105,9 @@ b.h2 <- brms::brm(vx ~ consp+trust_6+gender + education + work_location + age+
 # get tables
 btable.h2 <- describe_posterior(b.h2, effect='random')
 
+# save result
+write.csv(as.data.frame(btable.h2),'H2.csv')
+
 # H3
 prior.coef <- brms::prior(cauchy(0.,1),class='b')
 b.h3 <- brms::brm(vx ~ anti+trust_7+gender + education + work_location + age+
@@ -113,6 +119,7 @@ b.h3 <- brms::brm(vx ~ anti+trust_7+gender + education + work_location + age+
 
 # get tables
 btable.h3 <- describe_posterior(b.h3, effect='random')
-
+# save result
+write.csv(as.data.frame(btable.h3),'H3.csv')
 
 save.image('coefs.RData')
