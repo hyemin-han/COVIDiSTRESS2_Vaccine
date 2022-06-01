@@ -75,4 +75,21 @@ colnames(H3.trust_7.summary) <- c('Country','trust_7')
 # vx ~ consp
 H3.trust_7.summary <- H3.trust_7.summary[order(-H3.trust_7.summary$trust_7),]
 
+
+# Bayesian trial
+library(brms)
+library(bayestestR)
+
+# H2
+prior.coef <- brms::prior(cauchy(0.,1),class='b')
+b.h2 <- brms::brm(vx ~ consp+trust_6+gender + education + work_location + age+
+                    SSS_faml+ relationship_status+
+                    (1+consp+trust_6|residing_country),
+                  data=data.filtered, family = gaussian(),
+                  cores=4,chains=4, save_pars = save_pars(all = T),
+                  sample_prior ='yes', seed=1660415,prior=prior.coef)
+
+# get tables
+btable.h2 <- describe_posterior(b.h2, effect='random')
+
 save.image('coefs.RData')
