@@ -80,6 +80,16 @@ H3.trust_7.summary <- H3.trust_7.summary[order(-H3.trust_7.summary$trust_7),]
 library(brms)
 library(bayestestR)
 
+# H1
+prior.coef <- brms::prior(cauchy(0.,1),class='b')
+b.h1 <- brms::brm(vaccine_0neutral ~ vx+gender + education + work_location + age+
+                    SSS_faml+ relationship_status+
+                    (1+vx|residing_country),
+                  data=data.filtered, family = gaussian(),
+                  cores=4,chains=4, save_pars = save_pars(all = T),
+                  sample_prior ='yes', seed=1660415,prior=prior.coef)
+btable.h1 <- describe_posterior(b.h1, effect='random')
+
 # H2
 prior.coef <- brms::prior(cauchy(0.,1),class='b')
 b.h2 <- brms::brm(vx ~ consp+trust_6+gender + education + work_location + age+
@@ -91,5 +101,18 @@ b.h2 <- brms::brm(vx ~ consp+trust_6+gender + education + work_location + age+
 
 # get tables
 btable.h2 <- describe_posterior(b.h2, effect='random')
+
+# H3
+prior.coef <- brms::prior(cauchy(0.,1),class='b')
+b.h3 <- brms::brm(vx ~ anti+trust_7+gender + education + work_location + age+
+                    SSS_faml+ relationship_status+
+                    (1+anti+trust_7|residing_country),
+                  data=data.filtered, family = gaussian(),
+                  cores=4,chains=4, save_pars = save_pars(all = T),
+                  sample_prior ='yes', seed=1660415,prior=prior.coef)
+
+# get tables
+btable.h3 <- describe_posterior(b.h3, effect='random')
+
 
 save.image('coefs.RData')
