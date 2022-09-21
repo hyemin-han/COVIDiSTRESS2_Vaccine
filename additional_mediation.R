@@ -73,3 +73,4 @@ bf.med.21 <- bayes_factor(med2_result, med1_result, maxiter=10000, log=T,
                           cores=4) # 336.21748
 
 save.image(file='additional_mediation.RData')
+
